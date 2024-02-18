@@ -1,5 +1,7 @@
 import { create } from "zustand";
-import { devtools } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
+// noinspection ES6UnusedImports
+import {} from "@redux-devtools/extension"; // required for devtools typing
 
 interface BearState {
   bears: number;
@@ -8,12 +10,14 @@ interface BearState {
 
 export const useBearStore = create<BearState>()(
   devtools(
-    (set) => ({
-      bears: 0,
-      increase: (by) => set((state) => ({ bears: state.bears + by })),
-    }),
-    {
-      name: "bear-storage",
-    },
+    persist(
+      (set) => ({
+        bears: 0,
+        increase: (by) => set((state) => ({ bears: state.bears + by })),
+      }),
+      {
+        name: "bear-storage",
+      },
+    ),
   ),
 );
