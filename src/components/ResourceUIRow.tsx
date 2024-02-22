@@ -1,4 +1,5 @@
 import { Resource, useResourceStore } from "../stores/ResourceStore.ts";
+import { FormatWithCommas } from "../util/ResourceUtil.ts";
 
 export const ResourceUIRow = ({ resource }: { resource: Resource }) => {
   const { increaseResource, addMachine } = useResourceStore();
@@ -7,8 +8,8 @@ export const ResourceUIRow = ({ resource }: { resource: Resource }) => {
     <div className="flex gap-2 w-full justify-between">
       <div className="flex gap-2 w-full justify-between">
         <div> {resource.name}</div>
-        <div>{resource.value}</div>
-        <div> {resource.totalRate}/s</div>
+        <div>{FormatWithCommas(resource.value)}</div>
+        <div> {FormatWithCommas(resource.totalRate)}/s</div>
       </div>
       <button onClick={() => increaseResource(resource.name, 1)}>+1</button>
       <button

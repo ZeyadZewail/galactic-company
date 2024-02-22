@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ResourceUIRow } from "./components/ResourceUIRow.tsx";
 import { UseTicker } from "./hooks/useTicker.tsx";
 import { ReturnResources } from "./util/ResourceUtil.ts";
+import { Toaster } from "react-hot-toast";
 
 export const App = () => {
   const { initResourceStore, data } = useResourceStore();
@@ -23,6 +24,7 @@ export const App = () => {
 
   return (
     <div className="flex flex-col">
+      <Toaster position="bottom-center" />
       {resources.map((r) => (
         <ResourceUIRow resource={r} key={r.name} />
       ))}
