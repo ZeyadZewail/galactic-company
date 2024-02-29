@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware"; // noinspection ES6UnusedImports
 import {} from "@redux-devtools/extension";
 import { Edge, Node } from "reactflow";
-import { ResourceType } from "./ResourceStore.ts";
+
 import { BaseNode } from "../features/nodeInfra/BaseNode.tsx";
 
 export const nodeTypes = { BaseNode: BaseNode };
@@ -15,6 +15,9 @@ interface handle {
   handlePosition: handlePosition;
   type: "source" | "target";
 }
+
+export const ResourceTypes = ["wood", "stone", "iron", "plank"] as const;
+export type ResourceType = (typeof ResourceTypes)[number];
 
 export interface ResourceNode {
   name: string;

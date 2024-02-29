@@ -21,7 +21,6 @@ export const UseTicker = ({ init }: { init: boolean }) => {
 
   const ParseDifferenceSinceLastOnline = () => {
     if (lastTickDate) {
-      // console.log("User is back at " + new Date());
       const secondsMissed = Math.floor(
         (new Date().getTime() - new Date(lastTickDate).getTime()) / 1000,
       );
@@ -30,7 +29,6 @@ export const UseTicker = ({ init }: { init: boolean }) => {
         toast(`Welcome back! ${secondsMissed} seconds have passed!`);
       }
     }
-    // console.log("data " + JSON.stringify(data));
 
     // Perform any action when the user comes back
     startTicker();
@@ -41,8 +39,7 @@ export const UseTicker = ({ init }: { init: boolean }) => {
       // You can perform actions here based on visibility
       if (!isPageVisible) {
         const currentDate = new Date();
-        // console.log("User has tabbed out at " + currentDate);
-        // console.log("data " + JSON.stringify(data));
+
         // Perform any action when the user tabs out
         setLastTickDate(currentDate);
         clearTicker(); // Set interval to 1 second
