@@ -14,7 +14,7 @@ interface Machine {
   rate: number;
 }
 
-export const ResourceTypes = ["wood", "stone", "iron"] as const;
+export const ResourceTypes = ["wood", "stone", "iron", "plank"] as const;
 export type ResourceType = (typeof ResourceTypes)[number];
 
 interface Resources {
