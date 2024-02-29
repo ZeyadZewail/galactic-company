@@ -1,5 +1,5 @@
 import { Handle, Position } from "reactflow";
-import { ResourceNode, useNodeStore } from "../../stores/useNodeStore.ts";
+import { ResourceNode, useNodeStore } from "../../stores/NodeStore.ts";
 import { ReactNode, useMemo } from "react";
 
 export const BaseNode = ({ id, data }: { id: string; data: ResourceNode }) => {
@@ -30,14 +30,15 @@ export const BaseNode = ({ id, data }: { id: string; data: ResourceNode }) => {
 
   return (
     <>
-      <div className="w-60 bg-white flex justify-between items-center p-4">
+      <div className="w-72 bg-white flex justify-between items-center p-4">
         <div className="text-black flex-col flex">
           <div>{data.name}</div>
-          <div>{data.resourceType}</div>
-          <div>value: {data.value}</div>
-          <div>rate: {data.rate}/s</div>
+          <div>storageType: {data.storageType}</div>
+          <div>storage: {data.storage}</div>
+          <div>outputType: {data.outputType}</div>
+          <div>outputBuffer: {data.outputBuffer}</div>
+          <div>outputRate: {data.outputRate}/s</div>
         </div>
-
         <button className="p-2 bg-red-400" onClick={() => deleteNodeByID(id)}>
           delete
         </button>

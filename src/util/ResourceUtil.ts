@@ -1,7 +1,12 @@
-import { Resource } from "../stores/ResourceStore.ts";
+import { Edge, Node } from "reactflow";
+import { ResourceNode } from "../stores/NodeStore.ts";
 
-export const ReturnResources = (data: Record<string, Resource>) => {
-  return Object.values(data).filter((r) => !!r);
+export const ReturnNodes = (data: Node<ResourceNode>[]) => {
+  return Object.values(data).filter((n) => !!n && !!n.data);
+};
+
+export const ReturnEdges = (data: Edge[]) => {
+  return Object.values(data).filter((e) => !!e);
 };
 
 export const FormatWithCommas = (x: number) => {

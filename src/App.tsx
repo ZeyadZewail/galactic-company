@@ -1,6 +1,5 @@
 import "./App.css";
-import { useCallback, useEffect, useState } from "react";
-import { UseTicker } from "./hooks/useTicker.tsx";
+import { useCallback, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { Title } from "./components/Title.tsx";
 
@@ -18,18 +17,14 @@ import {
   Panel,
   ReactFlow,
 } from "reactflow";
-import { nodeTypes, useNodeStore } from "./stores/useNodeStore.ts";
+import { nodeTypes, useNodeStore } from "./stores/NodeStore.ts";
 import { CreateNodeButton } from "./features/nodeInfra/CreateNodeButton.tsx";
+import { Tick } from "./util/Tick.ts";
+import { UseTicker } from "./hooks/useTicker.tsx";
 
 export const App = () => {
   const [init, setInit] = useState(false);
   const { nodes, edges, setNodes, setEdges } = useNodeStore();
-
-  useEffect(() => {
-    setInit(true);
-  }, []);
-
-  UseTicker({ init });
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
@@ -51,9 +46,8 @@ export const App = () => {
     [edges, setEdges],
   );
 
-  if (!init) {
-    return;
-  }
+  UseTicker({ init });
+
   return (
     <div className="w-screen h-screen flex flex-col">
       <ReactFlow
@@ -63,6 +57,7 @@ export const App = () => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onInit={() => setInit(true)}
       >
         <Panel position={"top-center"}>
           <Title />
@@ -78,9 +73,12 @@ export const App = () => {
                 type: "BaseNode",
                 data: {
                   name: "WoodCutter",
-                  resourceType: "wood",
-                  value: 0,
-                  rate: 10,
+                  nodeLogicalType: "generator",
+                  storageType: null,
+                  storage: 0,
+                  outputType: "wood",
+                  outputBuffer: 0,
+                  outputRate: 10,
                   built: false,
                   cost: 10,
                   handles: [{ handlePosition: "right", type: "source" }],
@@ -94,9 +92,12 @@ export const App = () => {
                 type: "BaseNode",
                 data: {
                   name: "PlankMaker",
-                  resourceType: "wood",
-                  value: 0,
-                  rate: 0,
+                  nodeLogicalType: "producer",
+                  storageType: "wood",
+                  storage: 0,
+                  outputType: "plank",
+                  outputBuffer: 0,
+                  outputRate: 5,
                   built: false,
                   cost: 10,
                   handles: [
@@ -116,15 +117,27 @@ export const App = () => {
                 type: "BaseNode",
                 data: {
                   name: "Storage",
-                  resourceType: "plank",
-                  value: 0,
-                  rate: 0,
+                  nodeLogicalType: "storage",
+                  storageType: "plank",
+                  storage: 0,
+                  outputType: null,
+                  outputBuffer: 0,
+                  outputRate: 0,
                   built: false,
                   cost: 10,
                   handles: [{ handlePosition: "left", type: "target" }],
                 },
               }}
             />
+            <button onClick={() => Tick()}>Tick</button>
+            <button
+              onClick={() => {
+                setNodes([]);
+                setEdges([]);
+              }}
+            >
+              reset
+            </button>
           </div>
         </Panel>
         <Controls />
