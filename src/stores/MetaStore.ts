@@ -22,7 +22,7 @@ export const useMetaStore = create<MetaState>()(
         lastTickDate: new Date(),
         setLastTickDate: (d) => set(() => ({ lastTickDate: d })),
         Ticker: null,
-        ver: "0.1",
+        ver: latestVer,
         setVer: (newVer) => set({ ver: newVer }),
         startTicker: () => {
           // Ensure there's no running interval
