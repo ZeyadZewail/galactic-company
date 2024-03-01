@@ -1,7 +1,7 @@
 import { Edge, Node } from "reactflow";
 import { ResourceNode } from "../stores/NodeStore.ts";
 
-export const ReturnNodes = (data: Node<ResourceNode>[]) => {
+export const ReturnNodes = (data: Record<string, Node<ResourceNode>>) => {
   return Object.values(data).filter((n) => !!n && !!n.data);
 };
 

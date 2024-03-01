@@ -7,9 +7,13 @@ interface MetaState {
   lastTickDate: Date;
   setLastTickDate: (d: Date) => void;
   Ticker: number | null;
+  ver: string;
+  setVer: (newVer: string) => void;
   startTicker: () => void;
   clearTicker: () => void;
 }
+
+export const latestVer = "0.1";
 
 export const useMetaStore = create<MetaState>()(
   devtools(
@@ -18,6 +22,8 @@ export const useMetaStore = create<MetaState>()(
         lastTickDate: new Date(),
         setLastTickDate: (d) => set(() => ({ lastTickDate: d })),
         Ticker: null,
+        ver: "0.1",
+        setVer: (newVer) => set({ ver: newVer }),
         startTicker: () => {
           // Ensure there's no running interval
           if (get().Ticker === null) {

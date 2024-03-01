@@ -1,5 +1,5 @@
 import "./App.css";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { Title } from "./components/Title.tsx";
 
@@ -17,14 +17,28 @@ import {
   Panel,
   ReactFlow,
 } from "reactflow";
-import { nodeTypes, useNodeStore } from "./stores/NodeStore.ts";
+import {
+  nodeStoreInitialState,
+  nodeTypes,
+  useNodeStore,
+} from "./stores/NodeStore.ts";
 import { CreateNodeButton } from "./features/nodeInfra/CreateNodeButton.tsx";
 import { Tick } from "./util/Tick.ts";
 import { UseTicker } from "./hooks/useTicker.tsx";
+import { latestVer, useMetaStore } from "./stores/MetaStore.ts";
 
 export const App = () => {
   const [init, setInit] = useState(false);
-  const { nodes, edges, setNodes, setEdges } = useNodeStore();
+  const { nodesDict, edges, setNodes, setEdges } = useNodeStore();
+  const { ver, setVer } = useMetaStore();
+
+  //force reset store in case of breaking change
+  if (!ver || ver !== latestVer) {
+    useNodeStore.setState(nodeStoreInitialState);
+    setVer(latestVer);
+  }
+
+  const nodes = useMemo(() => Object.values(nodesDict), [nodesDict]);
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {

@@ -13,19 +13,22 @@ export const CreateInterval = () =>
   }, 1000);
 
 export const Tick = (count?: number) => {
-  const { nodes, edges } = NodeStore.getState();
+  const { nodesDict, edges } = NodeStore.getState();
   const { setLastTickDate } = MetaStore.getState();
 
   setLastTickDate(new Date());
   if (count && count > -1) {
-    tickAllNodes(nodes, edges);
+    tickAllNodes(nodesDict, edges);
   } else {
-    tickAllNodes(nodes, edges);
+    tickAllNodes(nodesDict, edges);
   }
 };
 
-const tickAllNodes = (nodes: Node<ResourceNode>[], edges: Edge[]) => {
-  const { setNodes, nodeDict } = NodeStore.getState();
+const tickAllNodes = (
+  nodes: Record<string, Node<ResourceNode>>,
+  edges: Edge[],
+) => {
+  const { setNodes } = NodeStore.getState();
 
   const processedNodes = ReturnNodes(nodes);
 
@@ -54,8 +57,8 @@ const tickAllNodes = (nodes: Node<ResourceNode>[], edges: Edge[]) => {
   // second pass (transportation)
   for (let i = 0; i < processedEdges.length; i++) {
     const edge = processedEdges[i];
-    const target = nodeDict[edge.target];
-    const source = nodeDict[edge.source];
+    const target = nodes[edge.target];
+    const source = nodes[edge.source];
 
     target.data.storage += source.data.outputBuffer;
     source.data.outputBuffer = 0;

@@ -34,8 +34,7 @@ export interface ResourceNode {
 
 interface NodeStore {
   lastID: number;
-  nodes: Node<ResourceNode>[];
-  nodeDict: Record<string, Node<ResourceNode>>;
+  nodesDict: Record<string, Node<ResourceNode>>;
   setNodes: (nodes: Node<ResourceNode>[]) => void;
   addNode: (node: Node<ResourceNode>) => void;
   deleteNodeByID: (id: string) => void;
@@ -61,34 +60,55 @@ const initNode: Node<ResourceNode> = {
   },
 };
 
+export const nodeStoreInitialState = {
+  nodesDict: { "0": initNode },
+  edges: [],
+  lastID: 0,
+};
+
 export const useNodeStore = create<NodeStore>()(
   devtools(
     persist(
       (set) => ({
-        nodes: [initNode],
-        nodeDict: { "0": initNode },
-        edges: [],
-        lastID: 0,
+        ...nodeStoreInitialState,
         addNode: (node) =>
           set((state) => {
             const newID = (state.lastID + 1).toString();
-            const tempNewDict = { ...state.nodeDict };
-            tempNewDict[newID] = node;
+            const newNodes = { ...state.nodesDict };
+            newNodes[newID] = { ...node, id: newID };
 
             return {
-              nodes: [...state.nodes, { ...node, id: newID }],
+              nodesDict: newNodes,
               lastID: state.lastID + 1,
-              nodeDict: tempNewDict,
             };
           }),
-        setNodes: (nodes) => set(() => ({ nodes: nodes })),
+        setNodes: (nodes) =>
+          set(() => {
+            const tempNodes: Record<string, Node<ResourceNode>> = {};
+
+            for (let i = 0; i < nodes.length; i++) {
+              tempNodes[nodes[i].id] = nodes[i];
+            }
+
+            return { nodesDict: tempNodes };
+          }),
         deleteNodeByID: (id) =>
-          set((state) => ({
-            nodes: state.nodes.filter((n) => n.id !== id),
-            edges: state.edges.filter(
-              (e) => e.source !== id && e.target !== id,
-            ),
-          })),
+          set((state) => {
+            const filteredNodes: Record<string, Node<ResourceNode>> = {};
+
+            Object.entries(state.nodesDict).forEach(([key, value]) => {
+              if (value.id !== id) {
+                filteredNodes[key] = value;
+              }
+            });
+
+            return {
+              nodesDict: filteredNodes,
+              edges: state.edges.filter(
+                (e) => e.source !== id && e.target !== id,
+              ),
+            };
+          }),
         setEdges: (edges) => set(() => ({ edges: edges })),
       }),
       {

@@ -17,6 +17,7 @@ export const BaseNode = ({ id, data }: { id: string; data: ResourceNode }) => {
 
       tempHandles.push(
         <Handle
+          style={{ height: 20, width: 20 }}
           type={handle.type}
           position={handle.handlePosition as Position}
           id={id + handle.handlePosition}
@@ -32,7 +33,9 @@ export const BaseNode = ({ id, data }: { id: string; data: ResourceNode }) => {
     <>
       <div className="w-72 bg-white flex justify-between items-center p-4">
         <div className="text-black flex-col flex">
-          <div>{data.name}</div>
+          <div>
+            {data.name} [{id}]
+          </div>
           <div>storageType: {data.storageType}</div>
           <div>storage: {data.storage}</div>
           <div>outputType: {data.outputType}</div>
