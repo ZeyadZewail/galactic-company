@@ -21,16 +21,6 @@ import { nodeTypes, useNodeStore } from "./stores/NodeStore.ts";
 import { CreateNodeButton } from "./features/nodeInfra/CreateNodeButton.tsx";
 import { Tick } from "./util/Tick.ts";
 import { UseTicker } from "./hooks/useTicker.tsx";
-import { latestVer, useMetaStore as MetaStore } from "./stores/MetaStore.ts";
-
-//force reset store in case of breaking change
-const { ver } = MetaStore.getState();
-
-if (!ver || ver !== latestVer) {
-  console.log("reset store");
-  localStorage.clear();
-  location.reload();
-}
 
 export const App = () => {
   const [init, setInit] = useState(false);
