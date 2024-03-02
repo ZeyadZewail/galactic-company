@@ -29,7 +29,8 @@ import { UseTicker } from "./hooks/useTicker.tsx";
 export const App = () => {
   const [init, setInit] = useState(false);
   const edgeUpdateSuccessful = useRef(true);
-  const { nodesDict, edges, setNodes, setEdges, deleteEdge } = useNodeStore();
+  const { nodesDict, edges, setNodes, setEdges, deleteEdge, reset } =
+    useNodeStore();
   const { ver } = useMetaStore();
 
   // debug
@@ -197,8 +198,7 @@ export const App = () => {
             <button onClick={() => Tick()}>Tick</button>
             <button
               onClick={() => {
-                setNodes([]);
-                setEdges([]);
+                reset();
               }}
             >
               reset

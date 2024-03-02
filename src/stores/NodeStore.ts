@@ -47,6 +47,7 @@ interface NodeStore {
   setEdges: (edges: Edge[]) => void;
   deleteEdgeByID: (id: string, sourceId: string, targetId: string) => void;
   deleteEdge: (edge: Edge) => void;
+  reset: () => void;
 }
 
 const initNode: Node<ResourceNode> = {
@@ -154,6 +155,7 @@ export const useNodeStore = create<NodeStore>()(
               edges: filteredEdges,
             };
           }),
+        reset: () => set({ nodesDict: {}, edges: [], lastID: 0 }),
       }),
       {
         name: "node-storage",
