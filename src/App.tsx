@@ -24,6 +24,7 @@ import { CreateNodeButton } from "./features/nodeInfra/CreateNodeButton.tsx";
 import { Tick } from "./util/Tick.ts";
 import { latestVer, useMetaStore } from "./stores/MetaStore.ts";
 import { BaseConnectionLine } from "./features/nodeInfra/BaseConnectionLine.tsx";
+import { UseTicker } from "./hooks/useTicker.tsx";
 
 export const App = () => {
   const [init, setInit] = useState(false);
@@ -87,7 +88,7 @@ export const App = () => {
     [deleteEdge],
   );
 
-  // UseTicker({ init });
+  UseTicker({ init });
 
   return (
     <div className="w-screen h-screen flex flex-col">
