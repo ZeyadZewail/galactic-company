@@ -21,7 +21,6 @@ export const BaseNode = ({ id, data }: { id: string; data: ResourceNode }) => {
           handleData={handle}
           id={id + handle.handlePosition}
           key={handle.handlePosition}
-          sourceId={id}
         />,
       );
     }

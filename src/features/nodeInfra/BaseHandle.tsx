@@ -4,12 +4,10 @@ import { CustomHandle, useNodeStore } from "../../stores/NodeStore.ts";
 
 export const BaseHandle = ({
   id,
-  sourceId,
   handleData,
   style,
 }: {
   id: string;
-  sourceId: string;
   handleData: CustomHandle;
   style: CSSProperties;
 }) => {
