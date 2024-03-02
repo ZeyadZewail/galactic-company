@@ -1,5 +1,5 @@
 import "./App.css";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { Title } from "./components/Title.tsx";
 
@@ -12,21 +12,28 @@ import {
   BackgroundVariant,
   Connection,
   Controls,
+  Edge,
   EdgeChange,
   NodeChange,
   Panel,
   ReactFlow,
+  updateEdge,
 } from "reactflow";
 import { nodeTypes, useNodeStore } from "./stores/NodeStore.ts";
 import { CreateNodeButton } from "./features/nodeInfra/CreateNodeButton.tsx";
 import { Tick } from "./util/Tick.ts";
-import { UseTicker } from "./hooks/useTicker.tsx";
 import { latestVer, useMetaStore } from "./stores/MetaStore.ts";
+import { BaseConnectionLine } from "./features/nodeInfra/BaseConnectionLine.tsx";
 
 export const App = () => {
   const [init, setInit] = useState(false);
-  const { nodesDict, edges, setNodes, setEdges } = useNodeStore();
+  const edgeUpdateSuccessful = useRef(true);
+  const { nodesDict, edges, setNodes, setEdges, deleteEdge } = useNodeStore();
   const { ver } = useMetaStore();
+
+  // debug
+  // console.log("nodesDict", nodesDict);
+  // console.log("edges", edges);
 
   //force reset store in case of breaking change
   if (!ver || ver !== latestVer) {
@@ -57,7 +64,30 @@ export const App = () => {
     [edges, setEdges],
   );
 
-  UseTicker({ init });
+  const onEdgeUpdateStart = useCallback(() => {
+    edgeUpdateSuccessful.current = false;
+  }, []);
+
+  const onEdgeUpdate = useCallback(
+    (oldEdge: Edge, newConnection: Connection) => {
+      edgeUpdateSuccessful.current = true;
+      setEdges(updateEdge(oldEdge, newConnection, edges));
+    },
+    [edges, setEdges],
+  );
+
+  const onEdgeUpdateEnd = useCallback(
+    (_: MouseEvent | TouchEvent, edge: Edge) => {
+      if (!edgeUpdateSuccessful.current) {
+        deleteEdge(edge);
+      }
+
+      edgeUpdateSuccessful.current = true;
+    },
+    [deleteEdge],
+  );
+
+  // UseTicker({ init });
 
   return (
     <div className="w-screen h-screen flex flex-col">
@@ -67,7 +97,11 @@ export const App = () => {
         nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onEdgeUpdate={onEdgeUpdate}
+        onEdgeUpdateEnd={onEdgeUpdateEnd}
+        onEdgeUpdateStart={onEdgeUpdateStart}
         onConnect={onConnect}
+        connectionLineComponent={BaseConnectionLine}
         onInit={() => setInit(true)}
       >
         <Panel position={"top-center"}>
@@ -93,6 +127,8 @@ export const App = () => {
                   built: false,
                   cost: 10,
                   handles: [{ handlePosition: "right", type: "source" }],
+                  targetIds: [],
+                  lastTargetedIndex: 0,
                 },
               }}
             />
@@ -118,6 +154,8 @@ export const App = () => {
                       type: "target",
                     },
                   ],
+                  targetIds: [],
+                  lastTargetedIndex: 0,
                 },
               }}
             />
@@ -137,6 +175,8 @@ export const App = () => {
                   built: false,
                   cost: 10,
                   handles: [{ handlePosition: "left", type: "target" }],
+                  targetIds: [],
+                  lastTargetedIndex: 0,
                 },
               }}
             />

@@ -11,7 +11,7 @@ export type nodeLogicalType = "generator" | "producer" | "storage";
 
 type handlePosition = "right" | "left" | "top" | "bottom";
 
-interface handle {
+export interface CustomHandle {
   handlePosition: handlePosition;
   type: "source" | "target";
 }
@@ -29,7 +29,9 @@ export interface ResourceNode {
   outputRate: number;
   built: boolean;
   cost: number;
-  handles: handle[];
+  handles: CustomHandle[];
+  targetIds: string[];
+  lastTargetedIndex: number;
 }
 
 interface NodeStore {
@@ -40,6 +42,8 @@ interface NodeStore {
   deleteNodeByID: (id: string) => void;
   edges: Edge[];
   setEdges: (edges: Edge[]) => void;
+  deleteEdgeByID: (id: string, sourceId: string, targetId: string) => void;
+  deleteEdge: (edge: Edge) => void;
 }
 
 const initNode: Node<ResourceNode> = {
@@ -57,6 +61,8 @@ const initNode: Node<ResourceNode> = {
     built: true,
     cost: 10,
     handles: [{ handlePosition: "right", type: "source" }],
+    targetIds: [],
+    lastTargetedIndex: 0,
   },
 };
 
@@ -110,6 +116,34 @@ export const useNodeStore = create<NodeStore>()(
             };
           }),
         setEdges: (edges) => set(() => ({ edges: edges })),
+        deleteEdgeByID: (edgeId, sourceId, targetId) =>
+          set((state) => {
+            const filteredEdges = state.edges.filter((e) => e.id !== edgeId);
+            const newDict = { ...state.nodesDict };
+
+            newDict[sourceId].data.targetIds = newDict[
+              sourceId
+            ].data.targetIds.filter((i) => i !== targetId);
+
+            return {
+              nodesDict: newDict,
+              edges: filteredEdges,
+            };
+          }),
+        deleteEdge: (edge) =>
+          set((state) => {
+            const filteredEdges = state.edges.filter((e) => e.id !== edge.id);
+            const newDict = { ...state.nodesDict };
+
+            newDict[edge.source].data.targetIds = newDict[
+              edge.source
+            ].data.targetIds.filter((i) => i !== edge.target);
+
+            return {
+              nodesDict: newDict,
+              edges: filteredEdges,
+            };
+          }),
       }),
       {
         name: "node-storage",

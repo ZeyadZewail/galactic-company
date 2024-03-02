@@ -1,7 +1,7 @@
 import { useMetaStore as MetaStore } from "../stores/MetaStore.ts";
-import { ReturnEdges, ReturnNodes } from "./ResourceUtil.ts";
+import { ReturnNodes } from "./ResourceUtil.ts";
 
-import { Edge, Node } from "reactflow";
+import { Node } from "reactflow";
 import {
   ResourceNode,
   useNodeStore as NodeStore,
@@ -13,26 +13,21 @@ export const CreateInterval = () =>
   }, 1000);
 
 export const Tick = (count?: number) => {
-  const { nodesDict, edges } = NodeStore.getState();
+  const { nodesDict } = NodeStore.getState();
   const { setLastTickDate } = MetaStore.getState();
 
   setLastTickDate(new Date());
   if (count && count > -1) {
-    tickAllNodes(nodesDict, edges);
+    tickAllNodes(nodesDict);
   } else {
-    tickAllNodes(nodesDict, edges);
+    tickAllNodes(nodesDict);
   }
 };
 
-const tickAllNodes = (
-  nodes: Record<string, Node<ResourceNode>>,
-  edges: Edge[],
-) => {
+const tickAllNodes = (nodes: Record<string, Node<ResourceNode>>) => {
   const { setNodes } = NodeStore.getState();
 
   const processedNodes = ReturnNodes(nodes);
-
-  const processedEdges = ReturnEdges(edges);
 
   // first pass (generation)
   for (let i = 0; i < processedNodes.length; i++) {
@@ -55,10 +50,23 @@ const tickAllNodes = (
   }
 
   // second pass (transportation)
-  for (let i = 0; i < processedEdges.length; i++) {
-    const edge = processedEdges[i];
-    const target = nodes[edge.target];
-    const source = nodes[edge.source];
+  for (let i = 0; i < processedNodes.length; i++) {
+    const source = processedNodes[i];
+    const sourceTargetIds = source.data.targetIds;
+    const target = nodes[sourceTargetIds[source.data.lastTargetedIndex]];
+    if (!target) {
+      continue;
+    }
+
+    // debug
+    // console.log("source", source);
+    // console.log("lastTargetedIndex", source.data.lastTargetedIndex);
+    // console.log("target", target);
+
+    source.data.lastTargetedIndex =
+      source.data.lastTargetedIndex + 1 > sourceTargetIds.length - 1
+        ? 0
+        : source.data.lastTargetedIndex + 1;
 
     if (source?.data && target?.data) {
       target.data.storage += source.data.outputBuffer;

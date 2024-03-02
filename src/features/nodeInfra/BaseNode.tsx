@@ -1,6 +1,6 @@
-import { Handle, Position } from "reactflow";
 import { ResourceNode, useNodeStore } from "../../stores/NodeStore.ts";
 import { ReactNode, useMemo } from "react";
+import { BaseHandle } from "./BaseHandle.tsx";
 
 export const BaseNode = ({ id, data }: { id: string; data: ResourceNode }) => {
   const { deleteNodeByID } = useNodeStore();
@@ -16,12 +16,12 @@ export const BaseNode = ({ id, data }: { id: string; data: ResourceNode }) => {
       const handle = data.handles[i];
 
       tempHandles.push(
-        <Handle
+        <BaseHandle
           style={{ height: 20, width: 20 }}
-          type={handle.type}
-          position={handle.handlePosition as Position}
+          handleData={handle}
           id={id + handle.handlePosition}
           key={handle.handlePosition}
+          sourceId={id}
         />,
       );
     }
