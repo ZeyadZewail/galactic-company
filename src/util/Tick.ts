@@ -60,8 +60,10 @@ const tickAllNodes = (
     const target = nodes[edge.target];
     const source = nodes[edge.source];
 
-    target.data.storage += source.data.outputBuffer;
-    source.data.outputBuffer = 0;
+    if (source?.data && target?.data) {
+      target.data.storage += source.data.outputBuffer;
+      source.data.outputBuffer = 0;
+    }
   }
 
   setNodes(processedNodes);
