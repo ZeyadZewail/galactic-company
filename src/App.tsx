@@ -72,9 +72,17 @@ export const App = () => {
   const onEdgeUpdate = useCallback(
     (oldEdge: Edge, newConnection: Connection) => {
       edgeUpdateSuccessful.current = true;
+      if (newConnection.source && newConnection.target) {
+        nodesDict[newConnection.source].data.targetIds = nodesDict[
+          newConnection.source
+        ].data.targetIds.filter((t) => t !== oldEdge.target);
+        nodesDict[newConnection.source].data.targetIds.push(
+          newConnection.target,
+        );
+      }
       setEdges(updateEdge(oldEdge, newConnection, edges));
     },
-    [edges, setEdges],
+    [edges, nodesDict, setEdges],
   );
 
   const onEdgeUpdateEnd = useCallback(
