@@ -112,12 +112,18 @@ export const App = () => {
         onConnect={onConnect}
         connectionLineComponent={BaseConnectionLine}
         onInit={() => setInit(true)}
+        fitView
       >
         <Panel position={"top-center"}>
           <Title />
         </Panel>
-
-        <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+        <Background
+          style={{ backgroundColor: "#242424" }}
+          color={"#ffffffde"}
+          variant={BackgroundVariant.Dots}
+          gap={12}
+          size={1}
+        />
         <Panel position={"top-left"} className={"w-[25%]"}>
           <div className="flex flex-col">
             <CreateNodeButton

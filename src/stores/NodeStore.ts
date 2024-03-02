@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware"; // noinspection ES6UnusedImports
 import {} from "@redux-devtools/extension";
-import { Edge, Node } from "reactflow";
+import { Edge, Node, ReactFlowInstance } from "reactflow";
 
 import { BaseNode } from "../features/nodeInfra/BaseNode.tsx";
 
@@ -38,7 +38,10 @@ interface NodeStore {
   lastID: number;
   nodesDict: Record<string, Node<ResourceNode>>;
   setNodes: (nodes: Node<ResourceNode>[]) => void;
-  addNode: (node: Node<ResourceNode>) => void;
+  addNode: (
+    node: Node<ResourceNode>,
+    reactFlowInstance: ReactFlowInstance,
+  ) => void;
   deleteNodeByID: (id: string) => void;
   edges: Edge[];
   setEdges: (edges: Edge[]) => void;
@@ -48,7 +51,7 @@ interface NodeStore {
 
 const initNode: Node<ResourceNode> = {
   id: "0",
-  position: { x: 600, y: 400 },
+  position: { x: 0, y: 0 },
   type: "BaseNode",
   data: {
     name: "WoodCutter",
@@ -77,11 +80,18 @@ export const useNodeStore = create<NodeStore>()(
     persist(
       (set) => ({
         ...nodeStoreInitialState,
-        addNode: (node) =>
+        addNode: (node, reactFlowInstance) =>
           set((state) => {
             const newID = (state.lastID + 1).toString();
             const newNodes = { ...state.nodesDict };
-            newNodes[newID] = { ...node, id: newID };
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+
+            const centerPosition = reactFlowInstance.screenToFlowPosition({
+              x: windowWidth / 2,
+              y: windowHeight / 2,
+            });
+            newNodes[newID] = { ...node, id: newID, position: centerPosition };
 
             return {
               nodesDict: newNodes,

@@ -13,7 +13,7 @@ interface MetaState {
   clearTicker: () => void;
 }
 
-export const latestVer = "0.1";
+export const latestVer = "0.2";
 
 export const useMetaStore = create<MetaState>()(
   devtools(

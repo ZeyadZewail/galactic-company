@@ -1,10 +1,12 @@
 import { ResourceNode, useNodeStore } from "../../stores/NodeStore.ts";
-import { Node } from "reactflow";
+import { Node, useReactFlow } from "reactflow";
 
 export const CreateNodeButton = ({ node }: { node: Node<ResourceNode> }) => {
   const { addNode } = useNodeStore();
-
+  const reactFlowInstance = useReactFlow();
   return (
-    <button onClick={() => addNode(node)}>{`Add ${node.data.name}`}</button>
+    <button
+      onClick={() => addNode(node, reactFlowInstance)}
+    >{`Add ${node.data.name}`}</button>
   );
 };
