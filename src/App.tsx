@@ -112,7 +112,6 @@ export const App = () => {
         onConnect={onConnect}
         connectionLineComponent={BaseConnectionLine}
         onInit={() => setInit(true)}
-        fitView
       >
         <Panel position={"top-center"}>
           <Title />
